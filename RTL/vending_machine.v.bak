@@ -1,0 +1,60 @@
+module vending_machine(
+    input clk,
+    input reset,
+    input coin_1, // 1元硬币
+    input coin_half, // 0.5元硬币
+    output reg dispense, // 出货信号
+    output reg [1:0] change // 找零信号 (00: 无找零, 01: 0.5元, 10: 1元)
+);
+
+    reg [1:0] state; // 状态机状态
+    reg [1:0] total; // 累计金额
+
+    parameter IDLE = 2'b00, WAIT = 2'b01, DISPENSE = 2'b10, CHANGE = 2'b11;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            state <= IDLE;
+            total <= 2'b00;
+            dispense <= 0;
+            change <= 2'b00;
+        end else begin
+            case (state)
+                IDLE: begin
+                    if (coin_1) begin
+                        total <= total + 2'b10; // 加1元
+                        state <= WAIT;
+                    end else if (coin_half) begin
+                        total <= total + 2'b01; // 加0.5元
+                        state <= WAIT;
+                    end
+                end
+
+                WAIT: begin
+                    if (total >= 2'b10) begin
+                        state <= DISPENSE;
+                    end else if (coin_1 || coin_half) begin
+                        if (coin_1) total <= total + 2'b10;
+                        if (coin_half) total <= total + 2'b01;
+                    end
+                end
+
+                DISPENSE: begin
+                    dispense <= 1;
+                    if (total > 2'b10) begin
+                        change <= total - 2'b10; // 找零
+                        state <= CHANGE;
+                    end else begin
+                        state <= IDLE;
+                    end
+                end
+
+                CHANGE: begin
+                    dispense <= 0;
+                    change <= 2'b00;
+                    state <= IDLE;
+                end
+            endcase
+        end
+    end
+endmodule

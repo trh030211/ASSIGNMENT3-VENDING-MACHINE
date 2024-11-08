@@ -1,0 +1,2 @@
+Info (10281): Verilog HDL Declaration information at vending_machine.v(6): object "dispense" differs only in case from object "DISPENSE" in the same scope File: D:/FPGA/AS3/LAB2/RTL/vending_machine.v Line: 6
+Info (10281): Verilog HDL Declaration information at vending_machine.v(8): object "change" differs only in case from object "CHANGE" in the same scope File: D:/FPGA/AS3/LAB2/RTL/vending_machine.v Line: 8

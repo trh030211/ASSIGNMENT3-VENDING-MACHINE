@@ -1,0 +1,34 @@
+module vending_machine_tb;
+    reg clk, reset, coin_1, coin_half;
+    wire dispense;
+    wire [1:0] change;
+
+    vending_machine uut (
+        .clk(clk),
+        .reset(reset),
+        .coin_1(coin_1),
+        .coin_half(coin_half),
+        .dispense(dispense),
+        .change(change)
+    );
+
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // 10ns周期
+    end
+
+    initial begin
+        reset = 1;
+        coin_1 = 0;
+        coin_half = 0;
+        #10 reset = 0;
+
+        #10 coin_1 = 1; // 插入1元
+        #10 coin_1 = 0;
+        #10 coin_half = 1; // 插入0.5元
+        #10 coin_half = 0;
+        #10 coin_1 = 1; // 插入1元，应该出货并找零0.5元
+        #10 coin_1 = 0;
+        #20 $stop;
+    end
+endmodule
